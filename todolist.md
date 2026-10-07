@@ -18,6 +18,41 @@ Status legend: [ ] todo · [~] in progress · [x] done · [!] blocked
 
 ---
 
+## [!] BLOCKER — wallet access for bokomoko.x
+
+`bokomoko.x` is self-custodied by the Ethereum address
+`0xd7d1874eb9073261108affe80d2e9034a89ee885` (shown by UD's "Confirm with your
+wallet" dialog). Setting the IPFS link requires signing a Polygon tx with that
+wallet.
+
+Investigation on this machine (read-only, metadata only):
+- No desktop wallet apps (/Applications, Application Support) — none found.
+- No wallet browser extensions (MetaMask/Phantom/Coinbase/Trust/etc.) in Chrome,
+  Brave, or Edge profiles.
+- Brave's built-in wallet keyring files exist in both profiles, but the Brave
+  Wallet UI shows "Get Started" in BOTH — i.e. no account is loaded.
+- No mobile wallet (user confirmed).
+
+Conclusion: the wallet controlling `0xd7d1...e885` is NOT active on this machine.
+The only way to regain control is the **recovery phrase** (12/24 BIP-39 words).
+
+Next action (user, OUTSIDE Kiro, offline-safe):
+- Search for the phrase in a password manager (1Password/Bitwarden/Apple
+  Passwords), macOS Keychain/Notes, or a physical/paper backup.
+- Filename-only disk search (prints paths, never contents) is acceptable; never
+  grep for the words themselves or echo them anywhere.
+- If found: restore via Brave "Get Started → Import", then do M1.
+
+If the phrase is unrecoverable: `bokomoko.x` is permanently locked. Pivot to a
+fresh wallet + a new name (new UD name, or ENS `kurukuru.eth`). The website is
+unaffected either way (already live/pinned on bokomint).
+
+IMPORTANT: the recovery phrase / private key must NEVER be pasted into a terminal
+command, a repo file, or any chat. GitHub secret only, and only if/when CI
+automation (M2 Option B) is chosen.
+
+---
+
 ## Milestone 1 — Point bokomoko.x at the current build (UD dashboard)
 
 Owner: Bokomoko. Done in the UD dashboard "Website" section; no code, no secrets.
