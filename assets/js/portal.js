@@ -60,7 +60,7 @@
       " " +
       cfg.site.name +
       " · servido pela torrent cloud (BTFS) + IPFS · <code>" +
-      cfg.site.ens +
+      cfg.site.domain +
       "</code>";
     mount.appendChild(footer);
   }

@@ -29,7 +29,7 @@ jobs:
     runs-on: [self-hosted, bokomint, ipfs]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build static bundle
         run: |
@@ -74,4 +74,5 @@ jobs:
           echo "::notice::Published CID: ${CID}"
           echo "Local gateway:  http://127.0.0.1:8080/ipfs/${CID}/"
           echo "Public gateway: https://ipfs.io/ipfs/${CID}/"
-          echo "Next: set ENS contenthash -> ipfs://${CID} (bokomoko.eth)"
+          echo "Next: set bokomoko.x record dweb.ipfs.hash -> ${CID}"
+          echo "      (Unstoppable Domains dashboard, or setMany on Polygon)"

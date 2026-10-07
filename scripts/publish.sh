@@ -13,7 +13,7 @@
 #   3. btfs CLI       — BitTorrent File System (torrent cloud), if present.
 #
 # Output: prints a line "CID=<cid>" that automation can parse, plus the
-# follow-up steps to point the friendly URL (ENS/DNSLink) at that CID.
+# follow-up steps to point the friendly URL (Unstoppable Domains) at that CID.
 #
 set -euo pipefail
 
@@ -70,10 +70,12 @@ echo ""
 echo "=============================================================="
 echo " Published via ${METHOD}. CID: ${CID}"
 echo "--------------------------------------------------------------"
-echo " Next steps to update the friendly URL (bokomoko.eth):"
-echo "   1. Set ENS contenthash -> ipfs://${CID}"
-echo "      (ENS app: https://app.ens.domains)"
-echo "   2. (optional) DNSLink TXT on _dnslink.bokomoko.<tld>:"
-echo "        dnslink=/ipfs/${CID}"
-echo "   3. Verify: https://<gateway>/ipfs/${CID}/"
+echo " Next steps to update the friendly URL (bokomoko.x):"
+echo "   1. Set the Unstoppable Domains record on bokomoko.x:"
+echo "        dweb.ipfs.hash = ${CID}"
+echo "      (UD dashboard: https://unstoppabledomains.com/manage"
+echo "       or setMany on the UNS registry contract, Polygon)"
+echo "   2. (optional) browser.preferred_protocols = [\"ipfs\",\"http\"]"
+echo "   3. Verify: https://<gateway>/ipfs/${CID}/  and bokomoko.x via a"
+echo "      UD-aware browser / ud.me gateway"
 echo "=============================================================="

@@ -3,7 +3,7 @@
     "name": "Bokomoko",
     "tagline": "Portal descentralizado na torrent cloud",
     "lang": "pt-BR",
-    "ens": "bokomoko.eth"
+    "domain": "bokomoko.x"
   },
   "nav": [
     { "id": "home", "label": "Início", "href": "index.html" },
