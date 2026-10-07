@@ -1,0 +1,22 @@
+{
+  "site": {
+    "name": "Bokomoko",
+    "tagline": "Portal descentralizado na torrent cloud",
+    "lang": "pt-BR",
+    "ens": "bokomoko.eth"
+  },
+  "nav": [
+    { "id": "home", "label": "Início", "href": "index.html" },
+    { "id": "pec3", "label": "PEC 3/2021", "href": "index.html" },
+    { "id": "about", "label": "Sobre", "href": "pages/about.html" }
+  ],
+  "pages": [
+    {
+      "id": "pec3-2021",
+      "title": "A História da PEC 3/2021",
+      "summary": "Infográfico interativo sobre a tramitação e votação da PEC 3/2021.",
+      "href": "index.html",
+      "featured": true
+    }
+  ]
+}
