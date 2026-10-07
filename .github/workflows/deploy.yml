@@ -1,0 +1,60 @@
+name: Deploy to Torrent Cloud
+
+# Deploy ONLY when changes land on main (i.e. after a reviewed PR is merged).
+# develop and feature branches never trigger a deploy.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and pin new version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build static bundle
+        run: |
+          chmod +x scripts/build.sh
+          ./scripts/build.sh
+
+      - name: Verify build output
+        run: |
+          test -f dist/index.html || { echo "::error::dist/index.html missing"; exit 1; }
+          echo "Build verified. Files:"
+          find dist -type f
+
+      # Pin the built bundle to IPFS so it is retrievable by CID.
+      # The returned CID is what you point ENS contenthash / DNSLink at.
+      - name: Pin to IPFS
+        id: ipfs
+        uses: ipfs/ipfs-deploy-action@v1
+        continue-on-error: true
+        with:
+          path-to-deploy: dist
+          # Configure a pinning provider via repo secrets, e.g. Filebase /
+          # web3.storage / Pinata. Example (Filebase):
+          # filebase-bucket: ${{ secrets.FILEBASE_BUCKET }}
+          # filebase-key: ${{ secrets.FILEBASE_KEY }}
+          # filebase-secret: ${{ secrets.FILEBASE_SECRET }}
+
+      - name: Report deployment
+        run: |
+          echo "service=web3site deploy finished on commit ${GITHUB_SHA}"
+          if [ -n "${{ steps.ipfs.outputs.cid }}" ]; then
+            echo "::notice::Published CID: ${{ steps.ipfs.outputs.cid }}"
+            echo "Point ENS contenthash -> ipfs://${{ steps.ipfs.outputs.cid }}"
+          else
+            echo "::warning::No pinning provider configured yet. Build succeeded but nothing was pinned."
+            echo "Add pinning secrets and enable the 'Pin to IPFS' step inputs to publish a CID."
+          fi
