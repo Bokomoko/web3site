@@ -15,10 +15,18 @@ concurrency:
   group: deploy-main
   cancel-in-progress: false
 
+env:
+  # IPFS (Kubo) API on the bokomint self-hosted runner. The node runs as a
+  # rootless Podman container bound to loopback, so the runner reaches it
+  # locally — the API is never exposed to the LAN.
+  IPFS_API: http://127.0.0.1:5001
+
 jobs:
   deploy:
     name: Build and pin new version
-    runs-on: ubuntu-latest
+    # Runs on the self-hosted runner on bokomint, which can reach the local
+    # IPFS node. Never GitHub-hosted (no route to the LAN node).
+    runs-on: [self-hosted, bokomint, ipfs]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,27 +42,36 @@ jobs:
           echo "Build verified. Files:"
           find dist -type f
 
-      # Pin the built bundle to IPFS so it is retrievable by CID.
-      # The returned CID is what you point ENS contenthash / DNSLink at.
-      - name: Pin to IPFS
+      - name: Check IPFS node is reachable
+        run: |
+          echo "Pinging IPFS API at ${IPFS_API}"
+          curl -sf -m 10 -X POST "${IPFS_API}/api/v0/version" \
+            || { echo "::error::IPFS node not reachable at ${IPFS_API}"; exit 1; }
+
+      - name: Pin bundle to the torrent cloud (local IPFS node)
         id: ipfs
-        uses: ipfs/ipfs-deploy-action@v1
-        continue-on-error: true
-        with:
-          path-to-deploy: dist
-          # Configure a pinning provider via repo secrets, e.g. Filebase /
-          # web3.storage / Pinata. Example (Filebase):
-          # filebase-bucket: ${{ secrets.FILEBASE_BUCKET }}
-          # filebase-key: ${{ secrets.FILEBASE_KEY }}
-          # filebase-secret: ${{ secrets.FILEBASE_SECRET }}
+        run: |
+          chmod +x scripts/publish.sh
+          # publish.sh adds dist/ recursively to the local node and prints
+          # "CID=<cid>" on its last meaningful line.
+          OUT="$(IPFS_API="${IPFS_API}" ./scripts/publish.sh dist)"
+          echo "$OUT"
+          CID="$(printf '%s\n' "$OUT" | sed -n 's/^CID=//p' | tail -1)"
+          test -n "$CID" || { echo "::error::no CID returned from pin"; exit 1; }
+          echo "cid=$CID" >> "$GITHUB_OUTPUT"
+
+      - name: Verify pin
+        run: |
+          CID="${{ steps.ipfs.outputs.cid }}"
+          echo "Verifying pin for $CID"
+          curl -sf -m 15 -X POST "${IPFS_API}/api/v0/pin/ls?arg=${CID}" \
+            || { echo "::error::CID ${CID} is not pinned"; exit 1; }
 
       - name: Report deployment
         run: |
+          CID="${{ steps.ipfs.outputs.cid }}"
           echo "service=web3site deploy finished on commit ${GITHUB_SHA}"
-          if [ -n "${{ steps.ipfs.outputs.cid }}" ]; then
-            echo "::notice::Published CID: ${{ steps.ipfs.outputs.cid }}"
-            echo "Point ENS contenthash -> ipfs://${{ steps.ipfs.outputs.cid }}"
-          else
-            echo "::warning::No pinning provider configured yet. Build succeeded but nothing was pinned."
-            echo "Add pinning secrets and enable the 'Pin to IPFS' step inputs to publish a CID."
-          fi
+          echo "::notice::Published CID: ${CID}"
+          echo "Local gateway:  http://127.0.0.1:8080/ipfs/${CID}/"
+          echo "Public gateway: https://ipfs.io/ipfs/${CID}/"
+          echo "Next: set ENS contenthash -> ipfs://${CID} (bokomoko.eth)"

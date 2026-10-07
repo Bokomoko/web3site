@@ -1,21 +1,25 @@
 #!/usr/bin/env bash
 #
-# publish.sh — pin the built bundle to the torrent cloud (BTFS) + IPFS mirror.
+# publish.sh — pin the built bundle to the torrent cloud (IPFS / BTFS).
 #
 # Usage:
 #   ./scripts/publish.sh [dist_dir]
 #
-# Requires at least one of:
-#   - btfs CLI  (BitTorrent File System — the "torrent cloud")
-#   - ipfs CLI  (IPFS mirror / fallback)
+# Pinning method, in order of preference:
+#   1. IPFS HTTP API  — set IPFS_API (e.g. http://127.0.0.1:5001).
+#                       Used by CI on the bokomint self-hosted runner, which
+#                       talks to the local Kubo (Podman) node over loopback.
+#   2. ipfs CLI       — if an `ipfs` binary is on PATH.
+#   3. btfs CLI       — BitTorrent File System (torrent cloud), if present.
 #
-# Output: prints the resulting CID. Point your ENS contenthash / DNSLink
-# TXT record at that CID to update the friendly URL.
+# Output: prints a line "CID=<cid>" that automation can parse, plus the
+# follow-up steps to point the friendly URL (ENS/DNSLink) at that CID.
 #
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="${1:-${ROOT}/dist}"
+IPFS_API="${IPFS_API:-}"
 
 if [ ! -d "${DIST}" ]; then
   echo "[publish] ERROR: bundle dir not found: ${DIST}"
@@ -23,39 +27,48 @@ if [ ! -d "${DIST}" ]; then
   exit 1
 fi
 
-BTFS_CID=""
-IPFS_CID=""
+CID=""
+METHOD=""
 
-# --- Torrent cloud: BTFS -----------------------------------------------------
-if command -v btfs >/dev/null 2>&1; then
-  echo "[publish] adding to BTFS (torrent cloud): ${DIST}"
-  BTFS_CID="$(btfs add -r -Q "${DIST}")"
-  echo "[publish] BTFS CID: ${BTFS_CID}"
-else
-  echo "[publish] WARN: btfs CLI not found — skipping torrent cloud pin"
+# --- 1. IPFS HTTP API (preferred: local node on the runner) ------------------
+if [ -n "${IPFS_API}" ]; then
+  echo "[publish] adding ${DIST} via IPFS HTTP API at ${IPFS_API}"
+  # Recursive add of the directory, pinned, wrap in a dir so the site keeps
+  # its paths. -Q-equivalent: take the last (root) hash from the add output.
+  RESP="$(curl -sf -m 120 -X POST \
+    "${IPFS_API}/api/v0/add?recursive=true&wrap-with-directory=true&pin=true&cid-version=1&quieter=true" \
+    $(find "${DIST}" -type f -printf "-F file=@%p;filename=%P ") )"
+  # The API streams one JSON object per added entry; the wrapping dir is last.
+  CID="$(printf '%s\n' "${RESP}" | tail -1 | sed -n 's/.*"Hash":"\([^"]*\)".*/\1/p')"
+  METHOD="ipfs-api"
 fi
 
-# --- IPFS mirror -------------------------------------------------------------
-if command -v ipfs >/dev/null 2>&1; then
-  echo "[publish] adding to IPFS (mirror): ${DIST}"
-  IPFS_CID="$(ipfs add -r -Q "${DIST}")"
-  echo "[publish] IPFS CID: ${IPFS_CID}"
-else
-  echo "[publish] WARN: ipfs CLI not found — skipping IPFS mirror"
+# --- 2. ipfs CLI -------------------------------------------------------------
+if [ -z "${CID}" ] && command -v ipfs >/dev/null 2>&1; then
+  echo "[publish] adding ${DIST} via ipfs CLI"
+  CID="$(ipfs add -r -Q --cid-version=1 "${DIST}")"
+  METHOD="ipfs-cli"
 fi
 
-if [ -z "${BTFS_CID}" ] && [ -z "${IPFS_CID}" ]; then
-  echo "[publish] ERROR: neither btfs nor ipfs is installed. Nothing published."
+# --- 3. btfs CLI (torrent cloud) ---------------------------------------------
+if [ -z "${CID}" ] && command -v btfs >/dev/null 2>&1; then
+  echo "[publish] adding ${DIST} via btfs CLI (torrent cloud)"
+  CID="$(btfs add -r -Q "${DIST}")"
+  METHOD="btfs-cli"
+fi
+
+if [ -z "${CID}" ]; then
+  echo "[publish] ERROR: no pin method available."
+  echo "[publish]   set IPFS_API, or install the ipfs or btfs CLI."
   exit 1
 fi
 
-# BTFS and IPFS share the same content-addressing, so the CIDs should match
-# for identical content. Prefer the BTFS CID when present.
-CID="${BTFS_CID:-${IPFS_CID}}"
+# Parseable line for automation (the deploy workflow greps for this).
+echo "CID=${CID}"
 
 echo ""
 echo "=============================================================="
-echo " Published. CID: ${CID}"
+echo " Published via ${METHOD}. CID: ${CID}"
 echo "--------------------------------------------------------------"
 echo " Next steps to update the friendly URL (bokomoko.eth):"
 echo "   1. Set ENS contenthash -> ipfs://${CID}"
