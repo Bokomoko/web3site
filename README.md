@@ -32,9 +32,9 @@ We pair BTFS with **IPFS** because the two speak the same content-addressing mod
 ```
   Source (this repo)                 Build output              Decentralized storage           Friendly URL
 ┌─────────────────────┐          ┌──────────────────┐       ┌───────────────────────┐      ┌──────────────────┐
-│ index.html          │          │ /dist            │       │  BTFS (torrent cloud) │      │ bokomoko.eth      │
+│ index.html          │          │ /dist            │       │  BTFS (torrent cloud) │      │ kurukuru.eth      │
 │ pages/*.html        │  build   │   index.html     │  pin  │   + IPFS mirror       │ ENS  │   ↓ contenthash   │
-│ assets/ css js      │ ───────► │   assets/...      │ ────► │   → CID (immutable)   │ ───► │ bokomoko.eth.limo │
+│ assets/ css js      │ ───────► │   assets/...      │ ────► │   → CID (immutable)   │ ───► │ kurukuru.eth.limo │
 │ content/*.json      │          │   content/...     │       │                       │      │ (DNSLink/IPNS)    │
 └─────────────────────┘          └──────────────────┘       └───────────────────────┘      └──────────────────┘
 ```
@@ -70,10 +70,10 @@ web3site/
 
 Raw CIDs are not readable. We make the portal reachable through a name:
 
-1. **ENS domain** — register `bokomoko.eth` and set its `contenthash` record to the current build CID.
-2. **DNSLink** (optional, for a classic DNS domain) — add a TXT record `_dnslink.bokomoko.<tld>` with value `dnslink=/ipfs/<CID>`.
+1. **ENS domain** — register `kurukuru.eth` and set its `contenthash` record to the current build CID.
+2. **DNSLink** (optional, for a classic DNS domain) — add a TXT record `_dnslink.kurukuru.<tld>` with value `dnslink=/ipfs/<CID>`.
 3. **Access** — users reach the site via:
-   - `https://bokomoko.eth.limo` (ENS → gateway resolution), or
+   - `https://kurukuru.eth.limo` (ENS → gateway resolution), or
    - a BTFS/IPFS gateway path `.../ipfs/<CID>/`, or
    - `ipns://` / `ens://` directly in web3-aware browsers (Brave).
 
@@ -121,14 +121,14 @@ Because content is addressed by hash, publishing a change = publishing a new CID
 - Plain JavaScript, **no frameworks** (React/Vue/Svelte are out). D3.js is allowed as a charting lib inside the infographic page only.
 - Static assets only — no server-side runtime in production (it's hosted peer-to-peer).
 - The torrent cloud target is **BTFS**, with **IPFS** as the mirror. Both are content-addressed and interoperable.
-- The public URL must be human-readable (ENS `bokomoko.eth` is the primary).
+- The public URL must be human-readable (ENS `kurukuru.eth` is the primary).
 - First page = **PEC 3/2021 infographic, version 4**.
 
 ---
 
 ## Open questions
 
-- Exact ENS name to register (`bokomoko.eth` assumed).
+- Exact ENS name to register (`kurukuru.eth`).
 - BTFS hosting approach: self-hosted node vs. managed BTFS/IPFS pinning provider.
 - Whether a legacy DNS domain + DNSLink is also wanted alongside ENS.
 

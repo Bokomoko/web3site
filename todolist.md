@@ -1,6 +1,6 @@
-# TODO — ENS wiring for bokomoko.eth
+# TODO — ENS wiring for kurukuru.eth
 
-Goal: make the friendly URL **`bokomoko.eth`** resolve to the latest deploy CID,
+Goal: make the friendly URL **`kurukuru.eth`** resolve to the latest deploy CID,
 automatically updated on every deploy to `main`. Today the deploy pins the site
 to the `bokomint` IPFS node and prints a CID, but pointing ENS at that CID is
 manual.
@@ -18,10 +18,10 @@ Owner: Bokomoko (requires a wallet + ETH for gas). These steps touch mainnet and
 cost money; they are deliberately NOT automated.
 
 - [ ] **1.1 Confirm/register the ENS name**
-  - Check `bokomoko.eth` availability at https://app.ens.domains.
+  - Check `kurukuru.eth` availability at https://app.ens.domains.
   - If unregistered, register it (annual fee + gas). If owned, confirm the
     controller is the wallet we will use for updates.
-  - Acceptance: `bokomoko.eth` shows the intended controller address.
+  - Acceptance: `kurukuru.eth` shows the intended controller address.
 
 - [ ] **1.2 Set the resolver**
   - Ensure the name uses the current ENS Public Resolver (supports `contenthash`).
@@ -30,8 +30,8 @@ cost money; they are deliberately NOT automated.
 - [ ] **1.3 Set the initial contenthash manually**
   - Set `contenthash` → `ipfs://<latest deploy CID>` (CIDv1, e.g. the current
     `bafybei...`).
-  - Acceptance: resolving `bokomoko.eth` returns the CID via
-    `https://bokomoko.eth.limo` and an ENS resolver query.
+  - Acceptance: resolving `kurukuru.eth` returns the CID via
+    `https://kurukuru.eth.limo` and an ENS resolver query.
 
 - [ ] **1.4 Decide the updater identity**
   - Create or designate a wallet that owns/controls the name and will sign
@@ -47,9 +47,9 @@ cost money; they are deliberately NOT automated.
 Owner: Kiro (implementation) + Bokomoko (adds secrets). Depends on M1.
 
 - [ ] **2.1 Add secrets to the repo** (Settings → Secrets → Actions)
-  - `ENS_UPDATER_PRIVATE_KEY` — wallet key that controls `bokomoko.eth`.
+  - `ENS_UPDATER_PRIVATE_KEY` — wallet key that controls `kurukuru.eth`.
   - `ETH_RPC_URL` — mainnet RPC endpoint (e.g. Infura/Alchemy/own node).
-  - `ENS_NAME` — `bokomoko.eth` (or make it a workflow env var).
+  - `ENS_NAME` — `kurukuru.eth` (or make it a workflow env var).
   - Acceptance: all three secrets present; values never printed in logs.
   - SECURITY: the private key gives control of the ENS name and spends ETH.
     Treat it as a production credential. Scope the wallet to only own this name;
@@ -89,7 +89,7 @@ Owner: Kiro. Depends on M2.
 
 - [ ] **3.1 End-to-end verify after a real deploy**
   - Merge a trivial change to `main`, let CI deploy + update ENS.
-  - Confirm `https://bokomoko.eth.limo` serves the new build (hard refresh;
+  - Confirm `https://kurukuru.eth.limo` serves the new build (hard refresh;
     gateways cache).
   - Confirm an ENS resolver query returns the new `contenthash`.
   - Acceptance: new content visible via the ENS gateway within a few minutes.
@@ -106,7 +106,7 @@ Owner: Kiro. Depends on M2.
 
 ## Open questions / decisions needed
 
-- Which wallet/key owns `bokomoko.eth` and signs CI updates? (M1.4)
+- Which wallet/key owns `kurukuru.eth` and signs CI updates? (M1.4)
 - Which mainnet RPC provider for `ETH_RPC_URL`? (M2.1)
 - Should an ENS-update failure fail the whole deploy, or just warn? (M2.4)
 - Is a second pin location in scope now, or later? (M3.2)

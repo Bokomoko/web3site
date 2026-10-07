@@ -74,4 +74,4 @@ jobs:
           echo "::notice::Published CID: ${CID}"
           echo "Local gateway:  http://127.0.0.1:8080/ipfs/${CID}/"
           echo "Public gateway: https://ipfs.io/ipfs/${CID}/"
-          echo "Next: set ENS contenthash -> ipfs://${CID} (bokomoko.eth)"
+          echo "Next: set ENS contenthash -> ipfs://${CID} (kurukuru.eth)"
