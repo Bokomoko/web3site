@@ -1,0 +1,98 @@
+/* Bokomoko Portal — base styles (vanilla, no framework) */
+
+:root {
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --text: #333;
+  --muted: #555;
+  --heading: #2c3e50;
+  --accent: #e74c3c;
+  --border: #ecf0f1;
+  --radius: 12px;
+  --maxw: 900px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* Header / nav injected by assets/js/portal.js */
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.site-header .inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.site-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--heading);
+  text-decoration: none;
+}
+
+.site-brand small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.site-nav {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.site-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+  color: var(--accent);
+}
+
+.container {
+  max-width: var(--maxw);
+  margin: 24px auto;
+  background: var(--surface);
+  padding: 40px;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.site-footer {
+  max-width: var(--maxw);
+  margin: 24px auto;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.site-footer code {
+  background: #eee;
+  padding: 2px 6px;
+  border-radius: 4px;
+}

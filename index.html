@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: A História da PEC 3/2021</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 900px;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        p {
+            line-height: 1.7;
+            text-align: justify;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .highlight {
+            background-color: #fdf2f0;
+            border-left: 4px solid #e74c3c;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .chart-container {
+            text-align: center;
+            margin-top: 40px;
+            position: relative;
+        }
+        svg {
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            margin-top: 20px;
+        }
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #1a252f;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        button.highlight-btn {
+            background-color: #e67e22;
+        }
+        button.highlight-btn:hover {
+            background-color: #d35400;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #e74c3c;
+            padding: 25px;
+            background: #fdf2f0;
+            border-radius: 8px;
+            border: 1px solid #fadbd8;
+        }
+        .tooltip {
+            position: absolute;
+            text-align: left;
+            padding: 12px;
+            font-size: 13px;
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            border-radius: 6px;
+            pointer-events: none;
+            opacity: 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+        .tooltip-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #7f8c8d;
+            padding-bottom: 3px;
+        }
+        .legend-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.95em;
+            color: #555;
+            font-weight: bold;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Infográfico: A História da PEC 3/2021</h1>
+        
+        <h2>Contexto e Proposição</h2>
+        <p>A Proposta de Emenda à Constituição (PEC) 3/2021, amplamente conhecida como <strong>"PEC da Blindagem"</strong> ou "PEC da Imunidade", foi inicialmente apresentada na Câmara dos Deputados em 24 de fevereiro de 2021 pelo deputado <strong>Celso Sabino (PSDB/PA</strong>, atualmente União Brasil).</p>
+        
+        <p>A PEC visava alterar os artigos 14, 27, 53, 102 e 105 da Constituição Federal para dispor sobre as prerrogativas parlamentares. O texto exigia autorização prévia da Câmara ou do Senado para a abertura de ação penal contra parlamentares, determinava que a decisão sobre prisões em flagrante (apenas para crimes inafiançáveis) ocorresse por voto secreto, e expandia o foro privilegiado para presidentes nacionais de partidos políticos.</p>
+        
+        <h2>Tramitação nas Comissões de Constituição e Justiça (CCJ)</h2>
+        <div class="highlight">
+            <strong>Câmara dos Deputados (2021 e 2025):</strong> Em sua proposição original em 2021, a PEC teve sua admissibilidade dada diretamente no Plenário pela relatora deputada <strong>Margarete Coelho (PP-PI)</strong>, pulando a tramitação padrão na CCJ sob o pretexto de que as comissões permanentes ainda não estavam instaladas. O texto-base (substitutivo) que acabou sendo aprovado e causou grande repercussão foi relatado pelo deputado <strong>Claudio Cajado (PP-BA)</strong> na Comissão Especial.
+        </div>
+        <div class="highlight">
+            <strong>Senado Federal (Setembro de 2025):</strong> Ao chegar no Senado sob fortes críticas da sociedade, o texto teve um destino diferente. Sob a presidência do senador <strong>Otto Alencar (PSD-BA)</strong>, a Comissão de Constituição e Justiça (CCJ) do Senado pautou a PEC rapidamente. O relator escolhido foi o senador <strong>Alessandro Vieira (MDB-SE)</strong>, que emitiu um duro parecer recomendando a rejeição total da proposta por inconstitucionalidade e desvio de finalidade. Em votação, a CCJ do Senado rejeitou a PEC de forma unânime (26 votos a 0), sepultando a proposta.
+        </div>
+        
+        <h2>A Votação Histórica na Câmara</h2>
+        <p>O gráfico abaixo exibe a divisão exata dos votos durante a polêmica aprovação do texto-base na Câmara dos Deputados. Explore as bolhas que representam as legendas partidárias.</p>
+
+        <div class="chart-container">
+            <h2>Posicionamento dos Partidos</h2>
+            
+            <div class="legend-container">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #e74c3c;"></div>
+                    Fatia A Favor
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #3498db;"></div>
+                    Fatia Contra
+                </div>
+            </div>
+
+            <p style="font-size: 0.95em; color: #7f8c8d; text-align: center; max-width: 700px; margin: 0 auto 20px;">
+                Cada círculo representa um partido, com tamanho proporcional ao total de votos proferidos. <br>
+                O preenchimento divide-se na proporção exata: <strong>vermelho</strong> para a parcela a favor e <strong>azul</strong> para a parcela contra.
+            </p>
+            
+            <div class="controls">
+                <button class="highlight-btn" onclick="sortBy('spectrum')">Espectro Político (Esq x Dir)</button>
+                <button onclick="sortBy('percent')">% a Favor</button>
+                <button onclick="sortBy('favor')">Votos a Favor (Qtd)</button>
+                <button onclick="sortBy('contra')">Votos Contra (Qtd)</button>
+                <button onclick="sortBy('size')">Tamanho Total</button>
+            </div>
+            
+            <div id="chart"></div>
+            <div id="tooltip" class="tooltip"></div>
+        </div>
+
+        <div class="footer">
+            Você acha que os políticos devem ser julgados pelos seus pares?
+        </div>
+    </div>
+
+    <script>
+        // Mapeamento de Espectro: 1: Esquerda, 2: Centro-Esq, 3: Centro-Dir, 4: Direita, 5: Extrema-Dir
+        // Nota: PV e PRD foram encaixados nas lógicas próximas (PV=Esquerda, PRD=Direita)
+        const rawData = [
+            {id: "PL", favor: 83, contra: 0, spectrum: 5},
+            {id: "PP", favor: 45, contra: 3, spectrum: 5},
+            {id: "Republicanos", favor: 42, contra: 0, spectrum: 5},
+            {id: "União", favor: 52, contra: 5, spectrum: 4},
+            {id: "Novo", favor: 0, contra: 4, spectrum: 4},
+            {id: "Avante", favor: 6, contra: 1, spectrum: 4},
+            {id: "PRD", favor: 5, contra: 0, spectrum: 4}, 
+            {id: "MDB", favor: 35, contra: 8, spectrum: 3},
+            {id: "Podemos", favor: 14, contra: 5, spectrum: 3},
+            {id: "PT", favor: 12, contra: 51, spectrum: 2},
+            {id: "PDT", favor: 10, contra: 12, spectrum: 2},
+            {id: "PSOL", favor: 0, contra: 14, spectrum: 1},
+            {id: "Rede", favor: 0, contra: 2, spectrum: 1},
+            {id: "PCdoB", favor: 0, contra: 9, spectrum: 1},
+            {id: "PV", favor: 0, contra: 4, spectrum: 1} 
+        ];
+
+        // Process data
+        const data = rawData.map(d => {
+            const total = d.favor + d.contra;
+            const perc = d.favor / total;
+            return { ...d, total, perc };
+        });
+
+        const width = 820;
+        const height = 450;
+        
+        const svg = d3.select("#chart").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+            
+        const tooltip = d3.select("#tooltip");
+
+        const sizeScale = d3.scaleSqrt()
+            .domain([0, d3.max(data, d => d.total)])
+            .range([12, 55]); 
+        
+        const nodes = data.map(d => Object.create(d));
+        nodes.forEach(d => {
+            d.r = sizeScale(d.total);
+            d.x = width / 2 + (Math.random() - 0.5) * 100;
+            d.y = height / 2 + (Math.random() - 0.5) * 100;
+        });
+
+        const simulation = d3.forceSimulation(nodes)
+            .force("collide", d3.forceCollide(d => d.r + 4).iterations(4))
+            .force("y", d3.forceY(height / 2).strength(0.1))
+            .on("tick", ticked);
+
+        const nodeGroup = svg.selectAll(".node")
+            .data(nodes)
+            .join("g")
+            .attr("class", "node")
+            .style("cursor", "pointer")
+            .on("mouseover", function(event, d) {
+                d3.select(this).select(".outline").attr("stroke", "#2c3e50").attr("stroke-width", 3);
+                tooltip.transition().duration(200).style("opacity", 1);
+                
+                let spectroText = "";
+                if(d.spectrum === 1) spectroText = "Esquerda";
+                else if(d.spectrum === 2) spectroText = "Centro-Esquerda";
+                else if(d.spectrum === 3) spectroText = "Centro-Direita";
+                else if(d.spectrum === 4) spectroText = "Direita";
+                else if(d.spectrum === 5) spectroText = "Extrema-Direita";
+
+                tooltip.html(`
+                    <div class="tooltip-title">${d.id} <span style="font-size:0.8em; font-weight:normal; color:#bdc3c7;">(${spectroText})</span></div>
+                    <strong>Votos a Favor:</strong> ${d.favor} <span style="color:#ff9999;">(${ (d.perc * 100).toFixed(1) }%)</span><br>
+                    <strong>Votos Contra:</strong> ${d.contra} <span style="color:#99ccff;">(${ ((1 - d.perc) * 100).toFixed(1) }%)</span><br>
+                    <strong>Total:</strong> ${d.total} votos
+                `)
+                .style("left", (event.pageX + 15) + "px")
+                .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(event, d) {
+                d3.select(this).select(".outline").attr("stroke", "#fff").attr("stroke-width", 1.5);
+                tooltip.transition().duration(500).style("opacity", 0);
+            });
+
+        const pie = d3.pie().value(d => d.value).sort(null);
+        const arc = d3.arc().innerRadius(0);
+
+        nodeGroup.each(function(d) {
+            const group = d3.select(this);
+            const pieData = pie([
+                {key: "favor", value: d.favor, color: "#e74c3c"},
+                {key: "contra", value: d.contra, color: "#3498db"}
+            ]);
+            
+            arc.outerRadius(d.r);
+            group.selectAll("path")
+                .data(pieData)
+                .join("path")
+                .attr("d", arc)
+                .attr("fill", p => p.data.color);
+                
+            group.append("circle")
+                .attr("class", "outline")
+                .attr("r", d.r)
+                .attr("fill", "none")
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 1.5)
+                .style("box-shadow", "2px 2px 5px rgba(0,0,0,0.3)");
+
+            group.append("text")
+                .text(d.id)
+                .attr("text-anchor", "middle")
+                .attr("dy", ".3em")
+                .attr("fill", "white")
+                .attr("font-size", Math.min(14, d.r * 0.55) + "px")
+                .attr("font-weight", "bold")
+                .style("pointer-events", "none")
+                .style("text-shadow", "1px 1px 3px rgba(0,0,0,0.8), -1px -1px 3px rgba(0,0,0,0.8)"); 
+        });
+
+        function ticked() {
+            nodeGroup.attr("transform", d => `translate(${d.x},${d.y})`);
+        }
+
+        window.sortBy = function(mode) {
+            let xForce;
+            svg.selectAll(".axis-label").remove();
+            
+            if (mode === 'size') {
+                const xScale = d3.scaleLinear().domain(d3.extent(nodes, d => d.total)).range([150, width - 150]);
+                xForce = d3.forceX(d => width - xScale(d.total) + 100).strength(0.8);
+                svg.append("text").attr("class", "axis-label").attr("x", 100).attr("y", height - 20).text("Mais Votos").attr("fill", "#7f8c8d").attr("font-weight", "bold");
+                svg.append("text").attr("class", "axis-label").attr("x", width - 150).attr("y", height - 20).text("Menos Votos").attr("fill", "#7f8c8d").attr("font-weight", "bold");
+            
+            } else if (mode === 'percent') {
+                const xScale = d3.scaleLinear().domain([-0.1, 1.1]).range([100, width - 100]);
+                xForce = d3.forceX(d => width - xScale(d.perc)).strength(0.8);
+                svg.append("text").attr("class", "axis-label").attr("x", 80).attr("y", height - 20).text("100% a favor").attr("fill", "#c0392b").attr("font-weight", "bold");
+                svg.append("text").attr("class", "axis-label").attr("x", width - 150).attr("y", height - 20).text("100% contra").attr("fill", "#2980b9").attr("font-weight", "bold");
+            
+            } else if (mode === 'favor') {
+                const xScale = d3.scaleLinear().domain(d3.extent(nodes, d => d.favor)).range([150, width - 150]);
+                xForce = d3.forceX(d => width - xScale(d.favor) + 100).strength(0.8);
+                svg.append("text").attr("class", "axis-label").attr("x", 80).attr("y", height - 20).text("Mais a Favor (Qtd)").attr("fill", "#c0392b").attr("font-weight", "bold");
+                svg.append("text").attr("class", "axis-label").attr("x", width - 150).attr("y", height - 20).text("Menos a Favor (Qtd)").attr("fill", "#7f8c8d").attr("font-weight", "bold");
+            
+            } else if (mode === 'contra') {
+                const xScale = d3.scaleLinear().domain(d3.extent(nodes, d => d.contra)).range([150, width - 150]);
+                xForce = d3.forceX(d => width - xScale(d.contra) + 100).strength(0.8);
+                svg.append("text").attr("class", "axis-label").attr("x", 80).attr("y", height - 20).text("Mais Contra (Qtd)").attr("fill", "#2980b9").attr("font-weight", "bold");
+                svg.append("text").attr("class", "axis-label").attr("x", width - 150).attr("y", height - 20).text("Menos Contra (Qtd)").attr("fill", "#7f8c8d").attr("font-weight", "bold");
+            
+            } else if (mode === 'spectrum') {
+                const xScale = d3.scaleLinear().domain([1, 5]).range([100, width - 100]);
+                xForce = d3.forceX(d => xScale(d.spectrum)).strength(0.8);
+                
+                svg.append("text").attr("class", "axis-label").attr("x", 100).attr("y", height - 20).text("← Esquerda").attr("fill", "#7f8c8d").attr("font-weight", "bold").attr("text-anchor", "middle");
+                svg.append("text").attr("class", "axis-label").attr("x", width / 2).attr("y", height - 20).text("Centro").attr("fill", "#7f8c8d").attr("font-weight", "bold").attr("text-anchor", "middle");
+                svg.append("text").attr("class", "axis-label").attr("x", width - 100).attr("y", height - 20).text("Extrema-Direita →").attr("fill", "#7f8c8d").attr("font-weight", "bold").attr("text-anchor", "middle");
+            }
+            
+            simulation.force("x", xForce).alpha(0.6).restart();
+        };
+
+        // Initialize with 'spectrum' sorting
+        setTimeout(() => { sortBy('spectrum'); }, 500);
+
+    </script>
+</body>
+</html>
