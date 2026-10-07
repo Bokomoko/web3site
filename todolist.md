@@ -18,85 +18,111 @@ Status legend: [ ] todo · [~] in progress · [x] done · [!] blocked
 
 ---
 
-## Milestone 1 — Point bokomoko.x at the current build (manual, simplest)
+## Milestone 1 — Point bokomoko.x at the current build (UD dashboard)
 
-Owner: Bokomoko. Done in the UD dashboard; no code, no secrets. This is the
-fastest path to a working public URL and is the recommended first step.
+Owner: Bokomoko. Done in the UD dashboard "Website" section; no code, no secrets.
+This is the fastest path to a working public URL and is the recommended first
+step. The domain is managed through the UD account, so UD performs the on-chain
+record write (likely gas-sponsored) when you save.
 
-- [ ] **1.1 Confirm ownership + management access**
-  - Sign in at https://unstoppabledomains.com and confirm `bokomoko.x` is in the
-    account and manageable.
-  - Note which chain it's on (UNS on Polygon for most recent names).
-  - Acceptance: `bokomoko.x` shows under "My Domains" with an editable records
-    panel.
+- [ ] **1.1 Open the Website section**
+  - UD dashboard → the domain `bokomoko.x` → **Website**.
+  - Two options are shown: "Upload website files to IPFS" (uploads into UD's
+    IPFS — NOT what we want) and "Custom website linking" (link an existing
+    IPFS hash — THIS is what we want, since the site lives on our `bokomint`
+    node).
+  - Acceptance: the "Custom website linking" card with a **Link Website** button
+    is visible.
 
-- [ ] **1.2 Set the IPFS website record**
-  - Set record `dweb.ipfs.hash` = `<latest deploy CID>` (the CIDv1 `bafybei...`
-    printed by the deploy; currently
-    `bafybeifv6ffwfav3hz2y3udsajdae7wxco2m3vqcs7enpr5onsntjia6pa`).
-  - Note: `ipfs.html.value` is the deprecated equivalent — do NOT use it; use
-    `dweb.ipfs.hash`.
-  - Save/submit (one Polygon tx; UD may sponsor gas).
-  - Acceptance: the record shows the CID in the dashboard.
+- [ ] **1.2 Link the deploy CID**
+  - Click **Link Website** under "Custom website linking".
+  - Paste the latest deploy CID (CIDv1 `bafybei...`, printed by the deploy;
+    currently `bafybeifv6ffwfav3hz2y3udsajdae7wxco2m3vqcs7enpr5onsntjia6pa`).
+  - Confirm/save. UD writes the IPFS website record (`dweb.ipfs.hash`) for the
+    domain.
+  - Acceptance: the dashboard shows `bokomoko.x` linked to that CID.
 
-- [ ] **1.3 (optional) Protocol hint**
-  - Set `browser.preferred_protocols` = `["ipfs","http"]`.
-  - Acceptance: record saved.
-
-- [ ] **1.4 Verify resolution**
-  - Open `https://bokomoko.x` in a UD-aware browser (Brave, Opera) OR via the
-    `ud.me` gateway, OR resolve the record through UD's resolution API/CLI.
+- [ ] **1.3 Verify resolution**
+  - Open `bokomoko.x` in a UD-aware browser (Brave, Opera) OR via the `ud.me`
+    gateway, OR read the record with UD's Resolution Service API (see M2.1).
   - Confirm the PEC 3/2021 landing page renders.
-  - Acceptance: `bokomoko.x` serves the current build; the resolved
-    `dweb.ipfs.hash` equals the deploy CID.
+  - Acceptance: `bokomoko.x` serves the current build; the resolved IPFS record
+    equals the deploy CID.
+
+> Per-deploy step: each deploy prints a new CID. Until/unless automation (M2) is
+> in place, re-open "Custom website linking" and paste the new CID after each
+> deploy to `main`.
 
 ---
 
-## Milestone 2 — Automate the record update in CI (optional)
+## Milestone 2 — Automation (optional, gated by custody)
 
-Owner: Kiro (implementation) + Bokomoko (adds secrets). Depends on M1 and on the
-decision in the Open Questions below. Only pursue if manual updates become a
-chore. UD updates are `setMany`/`set` calls on the UNS registry on Polygon.
+Owner: Kiro (implementation) + Bokomoko (secrets/custody). Depends on M1. Only
+pursue if the manual dashboard step becomes a chore.
 
-- [ ] **2.1 Decide: automate or stay manual**
-  - Manual (M1) is zero-secret and fine for infrequent deploys.
-  - Automation adds a signing key on the runner — a real credential. Choose
-    deliberately.
-  - Acceptance: decision recorded here.
+### UD APIs — what's usable here
 
-- [ ] **2.2 Add secrets to the repo** (Settings → Secrets → Actions)
-  - `UD_UPDATER_PRIVATE_KEY` — wallet key that owns/controls `bokomoko.x` on
-    Polygon.
+- **Resolution Service API (read-only)** — reads a domain's records, including
+  the IPFS website hash, via a REST call + API key. We CAN use this for
+  verification (no wallet needed). Docs:
+  https://docs.unstoppabledomains.com/resolution/quickstart/resolution/
+- **Partner API v3 (write/manage, REST)** — can register/manage records WITHOUT
+  touching the chain directly, BUT it operates on *Partner-custodied* domains
+  (UD manages dedicated custodial wallets for Partner-owned names). It is NOT a
+  "manage any user's self-held domain with an API key" endpoint. Docs:
+  https://docs.unstoppabledomains.com/web3/apis/partner/openapi/
+- **UNS registry contract `set`/`setMany` (write, on-chain)** — the universal
+  write path for a *self-custodied* domain, signed by the owning wallet on
+  Polygon. Docs:
+  https://docs.unstoppabledomains.com/smart-contracts/quick-start/manage-domain-records/
+
+### Custody reality for bokomoko.x
+
+The domain is managed through the UD **dashboard** ("Website" → "Custom website
+linking"), i.e. UD performs the on-chain write. That means:
+
+- There is almost certainly **no self-custody private key** available to sign a
+  `setMany` from CI today.
+- So full CI write-automation is **blocked** unless the domain is first exported
+  to a self-custody wallet whose key we can hold as a secret.
+
+- [ ] **2.1 Decide the automation path**
+  - **Option A — stay manual (recommended default):** keep using "Custom website
+    linking" in the dashboard after each deploy. Zero secrets. Add M2.5 read
+    verification via the Resolution API so we at least *detect* drift.
+  - **Option B — full CI automation:** export `bokomoko.x` to a self-custody
+    wallet, then sign `setMany` on Polygon from the runner. Requires a key as a
+    secret (see 2.2). Only if updates become frequent.
+  - Acceptance: option recorded here.
+
+- [ ] **2.2 (Option B only) Add secrets** (Settings → Secrets → Actions)
+  - `UD_UPDATER_PRIVATE_KEY` — key of the self-custody wallet that owns
+    `bokomoko.x` on Polygon (after export).
   - `POLYGON_RPC_URL` — a Polygon mainnet RPC endpoint.
-  - `UD_DOMAIN` — `bokomoko.x` (or a workflow env var).
-  - Acceptance: all three present; values never printed in logs.
-  - SECURITY: the key controls the domain and can set any record. Treat it as a
-    production credential; scope the wallet to just this domain, keep a minimal
-    MATIC balance for gas, rotate if exposed. GitHub secret only — never in the
-    repo.
+  - `UD_DOMAIN` — `bokomoko.x`.
+  - SECURITY: the key controls the domain. GitHub secret only, never in the
+    repo; scope the wallet to just this domain; keep a minimal MATIC balance;
+    rotate if exposed.
+  - Acceptance: all present; never printed in logs.
 
-- [ ] **2.3 Add a UD update step to `.github/workflows/deploy.yml`**
-  - Runs AFTER the existing "Verify pin" step, only on `main`.
-  - Takes `steps.ipfs.outputs.cid` and sets `dweb.ipfs.hash` on `bokomoko.x` via
-    the UNS registry `setMany` (namehash of the domain, key `dweb.ipfs.hash`,
-    value = CID).
-  - Implementation: a small committed script `scripts/ud-update.mjs` using
-    `viem` (Polygon) + the UNS registry ABI, or the Unstoppable resolution/
-    registry libraries. Prefer a committed, auditable script over an unpinned
-    third-party action.
-  - Pin exact dependency versions (iron rule: no open ranges).
-  - Runs on the `bokomint` self-hosted runner (needs egress to `POLYGON_RPC_URL`,
-    not the LAN).
-  - Must mask the key; fail the step if the tx reverts.
-  - Acceptance: a dry run encodes the correct `setMany` calldata for a known CID
-    and domain namehash.
+- [ ] **2.3 (Option B only) Add a UD update step to the deploy workflow**
+  - After "Verify pin", only on `main`. Takes `steps.ipfs.outputs.cid` and calls
+    `setMany` on the UNS registry (domain namehash, key `dweb.ipfs.hash`, value
+    = CID) via a committed `scripts/ud-update.mjs` (viem + UNS ABI, pinned
+    versions). Runs on the `bokomint` runner (needs egress to `POLYGON_RPC_URL`).
+  - Acceptance: dry run encodes correct `setMany` calldata for a known CID +
+    namehash.
 
-- [ ] **2.4 Gas + failure handling**
-  - Set a gas cap and timeout. Decide whether a failed UD tx fails the whole
-    deploy or just warns (the pin already succeeded).
-  - Add a `workflow_dispatch` path to re-point `bokomoko.x` to a given CID
-    manually.
+- [ ] **2.4 (Option B only) Gas + failure handling**
+  - Gas cap + timeout; decide whether a failed UD tx fails the deploy or warns
+    (pin already succeeded). Add a `workflow_dispatch` re-point path.
   - Acceptance: documented behavior for "pin ok, UD tx failed".
+
+- [ ] **2.5 (Either option) Read-side verification via Resolution API**
+  - After a deploy, call the Resolution Service API for `bokomoko.x` and assert
+    the IPFS record equals the just-deployed CID. Needs only a UD API key
+    (`UD_API_KEY` secret), no wallet.
+  - Acceptance: CI logs the resolved CID and flags a mismatch.
 
 ---
 
@@ -120,10 +146,11 @@ Owner: Kiro. Depends on M1 (and M2 if automated).
 
 ## Open questions / decisions needed
 
-- Update strategy: manual UD dashboard (M1) or automated `setMany` in CI (M2)?
-- If automated: which wallet/key controls `bokomoko.x`, and which Polygon RPC
-  provider? (M2.2)
-- Should a UD-update failure fail the whole deploy, or just warn? (M2.4)
+- Automation path: Option A (manual dashboard, recommended) or Option B (export
+  to self-custody + `setMany` in CI)? (M2.1)
+- Is exporting `bokomoko.x` out of UD-managed custody acceptable? That is the
+  precondition for any CI write-automation. (M2.1/2.2)
+- Do we want the read-side Resolution API verification regardless of path? (M2.5)
 - Is a second pin location in scope now, or later? (M3.2)
 
 ## Notes
